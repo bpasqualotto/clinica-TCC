@@ -45,11 +45,11 @@ require_once 'config.php';
                 <div class="col-lg-6">
                     <h2 class="text-primary mb-4">Nossa História</h2>
                     <p class="lead">
-                        Fundada em 2025, a Clínica Médica VivaMed nasceu do sonho de oferecer cuidados médicos 
+                        Fundada em 2023, a Clínica Médica VivaMed nasceu do sonho de oferecer cuidados médicos 
                         de excelência com atendimento humanizado e acessível para toda a comunidade.
                     </p>
                     <p>
-                        Ao longo de mais de 20 anos, crescemos e evoluímos constantemente, sempre mantendo nossos 
+                        Ao longo do tempo estamos crescendo e evoluindo constantemente, sempre mantendo nossos 
                         valores fundamentais: qualidade, ética, respeito e dedicação ao bem-estar dos nossos pacientes.
                     </p>
                     <p>
@@ -304,3 +304,4 @@ require_once 'config.php';
 </body>
 
 </html>
+
