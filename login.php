@@ -119,9 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="col-md-4">
                     <h5>Contato</h5>
-                    <p class="mb-1"><i class="fas fa-phone"></i> (11) 3456-7890</p>
+                    <p class="mb-1"><i class="fas fa-phone"></i> (41) 3456-7890</p>
                     <p class="mb-1"><i class="fas fa-envelope"></i> contato@clinicavivamed.com.br</p>
-                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (11) 99999-9999</p>
+                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99874-6633</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Horário de Funcionamento</h5>
@@ -144,4 +144,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- JavaScript Personalizado -->
     <script src="script.js"></script>
 </body>
+
 </html>
