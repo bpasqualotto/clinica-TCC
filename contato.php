@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="fas fa-phone-alt text-success mb-3" style="font-size: 3rem;"></i>
                             <h5 class="card-title">Telefone</h5>
                             <p class="card-text">
-                                <strong>(11) 3456-7890</strong><br>
+                                <strong>(41) 3456-7890</strong><br>
                                 Segunda a Sexta: 7h às 19h<br>
                                 Sábado: 8h às 14h
                             </p>
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="fab fa-whatsapp text-success mb-3" style="font-size: 3rem;"></i>
                             <h5 class="card-title">WhatsApp</h5>
                             <p class="card-text">
-                                <strong>(11) 99999-9999</strong><br>
+                                <strong>(41) 99874-6633</strong><br>
                                 Atendimento rápido para<br>
                                 agendamentos e dúvidas
                             </p>
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="fas fa-envelope text-primary mb-3" style="font-size: 3rem;"></i>
                             <h5 class="card-title">E-mail</h5>
                             <p class="card-text">
-                                <strong>contato@clinicasp.com.br</strong><br>
+                                <strong>contato@clinicavivamed.com.br</strong><br>
                                 Resposta em até 24 horas<br>
                                 para suas mensagens
                             </p>
@@ -229,8 +229,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <i class="fas fa-bus"></i> Como Chegar
                             </h5>
                             <ul class="list-unstyled">
-                                <li><i class="fas fa-subway text-primary"></i> Estação Vila Mariana (Linha Azul) - 5 min a pé</li>
-                                <li><i class="fas fa-bus text-success"></i> Linhas de ônibus: 4110, 5174, 6003</li>
+                                <li><i class="fas fa-subway text-primary"></i> Norte/Sul (Sentido Pinheirinho) - 5 min a pé</li>
+                                <li><i class="fas fa-bus text-success"></i> Linhas de ônibus: 203, 365, N72</li>
                                 <li><i class="fas fa-car text-info"></i> Estacionamento próprio disponível</li>
                             </ul>
                             
@@ -316,7 +316,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </h2>
                             <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Você pode agendar pelo telefone (11) 3456-7890, WhatsApp (11) 99999-9999, 
+                                    Você pode agendar pelo telefone (41) 3456-7890, WhatsApp (11) 99874-6633, 
                                     ou através do botão "Agendar Consulta" em nosso site.
                                 </div>
                             </div>
@@ -380,9 +380,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="col-md-4">
                     <h5>Contato</h5>
-                    <p class="mb-1"><i class="fas fa-phone"></i> (11) 3456-7890</p>
-                    <p class="mb-1"><i class="fas fa-envelope"></i> contato@clinicasp.com.br</p>
-                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (11) 99999-9999</p>
+                    <p class="mb-1"><i class="fas fa-phone"></i> (41) 3456-7890</p>
+                    <p class="mb-1"><i class="fas fa-envelope"></i> contato@clinicavivamed.com.br</p>
+                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99874-6633</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Horário de Funcionamento</h5>
@@ -405,4 +405,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- JavaScript Personalizado -->
     <script src="script.js"></script>
 </body>
+
 </html>
