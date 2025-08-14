@@ -195,14 +195,14 @@ require_once 'config.php';
                     <i class="fas fa-map-marker-alt text-primary mb-3" style="font-size: 3rem;"></i>
                     <h5>Localização</h5>
                     <p>Rua das Flores, 123<br>
-                    São Paulo, SP - CEP 01234-567</p>
+                    Curitiba, PR - CEP 01234-567</p>
                 </div>
                 
                 <div class="col-md-4 text-center mb-4">
                     <i class="fas fa-phone text-success mb-3" style="font-size: 3rem;"></i>
                     <h5>Telefone</h5>
-                    <p>(11) 3456-7890<br>
-                    WhatsApp: (11) 99999-9999</p>
+                    <p>(41) 3456-7890<br>
+                    WhatsApp: (41) 99874-6633</p>
                 </div>
                 
                 <div class="col-md-4 text-center mb-4">
@@ -251,4 +251,5 @@ require_once 'config.php';
     <!-- JavaScript Personalizado -->
     <script src="script.js"></script>
 </body>
+
 </html>
