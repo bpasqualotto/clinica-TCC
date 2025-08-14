@@ -1,6 +1,6 @@
 # Sistema de Clínica Médica - PHP
 
-Este é um sistema completo para clínicas médicas desenvolvido em PHP com MySQL, Bootstrap 5 e JavaScript.
+Sistema completo para clínicas médicas desenvolvido em PHP com MySQL, Bootstrap 5 e JavaScript.
 
 ## 📋 Características
 
@@ -196,4 +196,5 @@ Este projeto é fornecido como exemplo educacional. Adapte conforme necessário 
 ---
 
 **Desenvolvido para Clínica Médica VivaMed**  
+
 *Sistema completo de gestão para clínicas médicas*
