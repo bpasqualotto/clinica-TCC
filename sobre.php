@@ -45,7 +45,7 @@ require_once 'config.php';
                 <div class="col-lg-6">
                     <h2 class="text-primary mb-4">Nossa História</h2>
                     <p class="lead">
-                        Fundada em 2003, a Clínica Médica VivaMed nasceu do sonho de oferecer cuidados médicos 
+                        Fundada em 2025, a Clínica Médica VivaMed nasceu do sonho de oferecer cuidados médicos 
                         de excelência com atendimento humanizado e acessível para toda a comunidade.
                     </p>
                     <p>
@@ -125,9 +125,9 @@ require_once 'config.php';
                     <div class="card text-center h-100">
                         <div class="card-body">
                             <i class="fas fa-user-md text-primary mb-3" style="font-size: 4rem;"></i>
-                            <h5 class="card-title">Dr. João Silva</h5>
+                            <h5 class="card-title">Dra. Gabriela Pasqualotto</h5>
                             <p class="text-muted">Cardiologista</p>
-                            <p class="card-text">CRM 12345 - SP</p>
+                            <p class="card-text">CRM 12345 - PR</p>
                             <p class="small">Especialista em cardiologia com mais de 15 anos de experiência.</p>
                         </div>
                     </div>
@@ -137,9 +137,9 @@ require_once 'config.php';
                     <div class="card text-center h-100">
                         <div class="card-body">
                             <i class="fas fa-user-md text-success mb-3" style="font-size: 4rem;"></i>
-                            <h5 class="card-title">Dra. Maria Santos</h5>
+                            <h5 class="card-title">Dra. Nicole Azevedo</h5>
                             <p class="text-muted">Pediatra</p>
-                            <p class="card-text">CRM 23456 - SP</p>
+                            <p class="card-text">CRM 23456 - PR</p>
                             <p class="small">Especialista em pediatria com foco em desenvolvimento infantil.</p>
                         </div>
                     </div>
@@ -151,7 +151,7 @@ require_once 'config.php';
                             <i class="fas fa-user-md text-info mb-3" style="font-size: 4rem;"></i>
                             <h5 class="card-title">Dr. Carlos Lima</h5>
                             <p class="text-muted">Clínico Geral</p>
-                            <p class="card-text">CRM 34567 - SP</p>
+                            <p class="card-text">CRM 34567 - PR</p>
                             <p class="small">Médico generalista com ampla experiência em medicina preventiva.</p>
                         </div>
                     </div>
@@ -163,7 +163,7 @@ require_once 'config.php';
                             <i class="fas fa-user-md text-warning mb-3" style="font-size: 4rem;"></i>
                             <h5 class="card-title">Dra. Ana Costa</h5>
                             <p class="text-muted">Ginecologista</p>
-                            <p class="card-text">CRM 45678 - SP</p>
+                            <p class="card-text">CRM 45678 - PR</p>
                             <p class="small">Especialista em saúde da mulher com foco em prevenção.</p>
                         </div>
                     </div>
@@ -277,9 +277,9 @@ require_once 'config.php';
                 </div>
                 <div class="col-md-4">
                     <h5>Contato</h5>
-                    <p class="mb-1"><i class="fas fa-phone"></i> (11) 3456-7890</p>
+                    <p class="mb-1"><i class="fas fa-phone"></i> (41) 3456-7890</p>
                     <p class="mb-1"><i class="fas fa-envelope"></i> contato@clinicavivamed.com.br</p>
-                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (11) 99999-9999</p>
+                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99874-5523</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Horário de Funcionamento</h5>
@@ -291,7 +291,7 @@ require_once 'config.php';
             <hr class="my-3">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-0">&copy; 2024 Clínica Médica VivaMed. Todos os direitos reservados.</p>
+                    <p class="mb-0">&copy; 2025 Clínica Médica VivaMed. Todos os direitos reservados.</p>
                 </div>
             </div>
         </div>
@@ -302,4 +302,5 @@ require_once 'config.php';
     <!-- JavaScript Personalizado -->
     <script src="script.js"></script>
 </body>
+
 </html>
