@@ -180,7 +180,7 @@ require_once 'config.php';
                 </div>
                 <div class="col-md-4 text-center">
                     <a href="tel:+551199999999" class="btn btn-light btn-lg">
-                        <i class="fas fa-phone"></i> (11) 99999-9999
+                        <i class="fas fa-phone"></i> (41) 99874-6633
                     </a>
                 </div>
             </div>
@@ -253,3 +253,4 @@ require_once 'config.php';
 </body>
 
 </html>
+
