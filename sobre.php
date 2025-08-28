@@ -279,7 +279,7 @@ require_once 'config.php';
                     <h5>Contato</h5>
                     <p class="mb-1"><i class="fas fa-phone"></i> (41) 3456-7890</p>
                     <p class="mb-1"><i class="fas fa-envelope"></i> contato@clinicavivamed.com.br</p>
-                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99874-5523</p>
+                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99997-1693</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Horário de Funcionamento</h5>

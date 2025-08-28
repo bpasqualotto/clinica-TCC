@@ -180,7 +180,7 @@ require_once 'config.php';
                 </div>
                 <div class="col-md-4 text-center">
                     <a href="tel:+551199999999" class="btn btn-light btn-lg">
-                        <i class="fas fa-phone"></i> (41) 99874-6633
+                        <i class="fas fa-phone"></i> (41) 99997-1693
                     </a>
                 </div>
             </div>
@@ -202,7 +202,7 @@ require_once 'config.php';
                     <i class="fas fa-phone text-success mb-3" style="font-size: 3rem;"></i>
                     <h5>Telefone</h5>
                     <p>(41) 3456-7890<br>
-                    WhatsApp: (41) 99874-6633</p>
+                    WhatsApp: (41) 99997-1693</p>
                 </div>
                 
                 <div class="col-md-4 text-center mb-4">
@@ -228,7 +228,7 @@ require_once 'config.php';
                     <h5>Contato</h5>
                     <p class="mb-1"><i class="fas fa-phone"></i> (41) 3456-7890</p>
                     <p class="mb-1"><i class="fas fa-envelope"></i> contato@clinicavivamed.com.br</p>
-                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99874-6633</p>
+                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99997-1693</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Horário de Funcionamento</h5>
