@@ -91,11 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="fab fa-whatsapp text-success mb-3" style="font-size: 3rem;"></i>
                             <h5 class="card-title">WhatsApp</h5>
                             <p class="card-text">
-                                <strong>(41) 99874-6633</strong><br>
+                                <strong>(41) 99997-1693</strong><br>
                                 Atendimento rápido para<br>
                                 agendamentos e dúvidas
                             </p>
-                            <a href="https://wa.me/5511999999999" class="btn btn-success" target="_blank">
+                            <a href="https://w.app/clnicavivamed" class="btn btn-success" target="_blank">
                                 <i class="fab fa-whatsapp"></i> Chamar no WhatsApp
                             </a>
                         </div>
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <i class="fas fa-phone"></i> Telefone
                                         </label>
                                         <input type="tel" class="form-control" id="telefone" name="telefone" 
-                                               placeholder="(11) 99999-9999">
+                                               placeholder="(11) 99997-1693">
                                     </div>
                                     
                                     <div class="col-md-6 mb-3">
@@ -316,7 +316,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </h2>
                             <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Você pode agendar pelo telefone (41) 3456-7890, WhatsApp (11) 99874-6633, 
+                                    Você pode agendar pelo telefone (41) 3456-7890, WhatsApp (41) 99997-1693, 
                                     ou através do botão "Agendar Consulta" em nosso site.
                                 </div>
                             </div>
@@ -382,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h5>Contato</h5>
                     <p class="mb-1"><i class="fas fa-phone"></i> (41) 3456-7890</p>
                     <p class="mb-1"><i class="fas fa-envelope"></i> contato@clinicavivamed.com.br</p>
-                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99874-6633</p>
+                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99997-1693</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Horário de Funcionamento</h5>
