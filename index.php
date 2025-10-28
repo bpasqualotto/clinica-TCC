@@ -1,5 +1,18 @@
 <?php
 require_once 'config.php';
+
+// Detectar navegador
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
+$browser_msg = "";
+if (strpos($user_agent, 'Firefox') !== false) {
+    $browser_msg = "Você está usando o Firefox!";
+} elseif (strpos($user_agent, 'Chrome') !== false) {
+    $browser_msg = "Você está usando o Chrome!";
+} elseif (strpos($user_agent, 'Safari') !== false) {
+    $browser_msg = "Você está usando o Safari!";
+} else {
+    $browser_msg = "Navegador não identificado.";
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -22,6 +35,13 @@ require_once 'config.php';
     <!-- Mensagens Flash -->
     <div class="container mt-3">
         <?php exibirMensagem(); ?>
+    </div>
+
+    <!-- Mensagem de navegador -->
+    <div class="container mt-3">
+        <div class="alert alert-info text-center">
+            <?php echo $browser_msg; ?>
+        </div>
     </div>
     
     <!-- Seção Hero -->
@@ -251,7 +271,4 @@ require_once 'config.php';
     <!-- JavaScript Personalizado -->
     <script src="script.js"></script>
 </body>
-
 </html>
-
-
