@@ -1,34 +1,67 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 
-// Processar login
+/**
+ * Login de usuários (password_verify)
+ */
+try {
+    if (!isset($pdo)) {
+        $pdo = new PDO(
+            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+            DB_USER,
+            DB_PASS,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]
+        );
+    }
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo "<h1>Erro de conexão</h1><p>Não foi possível conectar ao banco de dados.</p>";
+    if (ini_get('display_errors')) {
+        echo "<pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
+    }
+    exit;
+}
+
+function flash(string $msg, string $tipo = 'info'): void {
+    $_SESSION['mensagem'] = $msg;
+    $_SESSION['tipo_mensagem'] = $tipo;
+}
+function flash_show(): void {
+    if (!empty($_SESSION['mensagem'])) {
+        $tipo = $_SESSION['tipo_mensagem'] ?? 'info';
+        $classe = 'alert-info';
+        if ($tipo === 'sucesso') $classe = 'alert-success';
+        if ($tipo === 'erro')    $classe = 'alert-danger';
+        if ($tipo === 'aviso')   $classe = 'alert-warning';
+        echo '<div class="alert ' . $classe . ' mt-3" role="alert">'
+            . htmlspecialchars($_SESSION['mensagem']) .
+            '</div>';
+        unset($_SESSION['mensagem'], $_SESSION['tipo_mensagem']);
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $usuario = trim($_POST['usuario'] ?? '');
-    $senha = trim($_POST['senha'] ?? '');
-    
-    if (empty($usuario) || empty($senha)) {
-        definirMensagem('Por favor, preencha todos os campos.', 'erro');
+    $email = trim($_POST['email'] ?? '');
+    $senha = $_POST['senha'] ?? '';
+
+    if ($email === '' || $senha === '') {
+        flash('Informe e-mail e senha.', 'erro');
     } else {
-        try {
-            $pdo = conectarBanco();
-            $sql = "SELECT * FROM usuarios WHERE usuario = ? AND ativo = 1";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$usuario]);
-            $user = $stmt->fetch();
-            
-            if ($user && password_verify($senha, $user['senha_hash'])) {
-                $_SESSION['usuario_id'] = $user['id'];
-                $_SESSION['usuario'] = $user['usuario'];
-                $_SESSION['cargo'] = $user['cargo'];
-                $_SESSION['nome_completo'] = $user['nome_completo'];
-                
-                definirMensagem("Bem-vindo, {$user['nome_completo']}!", 'sucesso');
-                redirecionar('dashboard.php');
-            } else {
-                definirMensagem('Credenciais inválidas.', 'erro');
-            }
-        } catch (Exception $e) {
-            definirMensagem('Erro no sistema. Tente novamente.', 'erro');
+        $stmt = $pdo->prepare("SELECT id, nome, email, senha FROM usuarios WHERE email = ? LIMIT 1");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+
+        if ($user && password_verify($senha, $user['senha'])) {
+            $_SESSION['usuario_id'] = (int)$user['id'];
+            $_SESSION['usuario']    = $user['nome'];
+            flash('Login realizado com sucesso!', 'sucesso');
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            flash('Credenciais inválidas.', 'erro');
         }
     }
 }
@@ -37,112 +70,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Clínica Médica VivaMed</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- CSS Personalizado -->
-    <link href="estilo.css" rel="stylesheet">
+    <title>Login - VivaMed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+          referrerpolicy="no-referrer" />
 </head>
 <body>
-    <!-- Incluir Menu -->
-    <?php include 'menu.php'; ?>
-    
-    <!-- Login Form -->
-    <div class="container py-5">
-        <!-- Mensagens Flash -->
-        <?php exibirMensagem(); ?>
-        
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white text-center">
-                        <h4 class="mb-0">
-                            <i class="fas fa-user-md"></i> Login da Clínica
-                        </h4>
-                    </div>
-                    
-                    <div class="card-body p-4">
-                        <form method="POST">
-                            <div class="mb-3">
-                                <label for="usuario" class="form-label">
-                                    <i class="fas fa-user"></i> Usuário
-                                </label>
-                                <input type="text" class="form-control" id="usuario" name="usuario" 
-                                       placeholder="Digite seu usuário" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="senha" class="form-label">
-                                    <i class="fas fa-lock"></i> Senha
-                                </label>
-                                <input type="password" class="form-control" id="senha" name="senha" 
-                                       placeholder="Digite sua senha" required>
-                            </div>
-                            
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-sign-in-alt"></i> Entrar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <div class="card-footer text-center text-muted">
-                        <small>
-                            <i class="fas fa-shield-alt"></i> Acesso restrito a funcionários
-                        </small>
-                    </div>
+<?php require_once __DIR__ . '/menu.php'; ?>
+
+<div class="container" style="max-width: 480px;">
+    <h1 class="mt-4"><i class="fas fa-sign-in-alt me-2"></i> Login</h1>
+    <?php flash_show(); ?>
+    <div class="card shadow-sm mt-3">
+        <div class="card-body">
+            <form method="post" action="login.php" novalidate>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
                 </div>
-                
-                <!-- Credenciais de demonstração -->
-                <div class="alert alert-info mt-3">
-                    <h6><i class="fas fa-info-circle"></i> Credenciais de demonstração:</h6>
-                    <strong>Usuário:</strong> admin<br>
-                    <strong>Senha:</strong> admin123
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" id="senha" name="senha" class="form-control" required>
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-door-open me-1"></i> Entrar
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- Rodapé -->
-    <footer class="bg-primary text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5><i class="fas fa-hospital-alt"></i> Clínica Médica VivaMed</h5>
-                    <p class="mb-1"><i class="fas fa-map-marker-alt"></i> Rua das Flores, 123</p>
-                    <p class="mb-1">Curitiba, PR - CEP 01234-567</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contato</h5>
-                    <p class="mb-1"><i class="fas fa-phone"></i> (41) 3456-7890</p>
-                    <p class="mb-1"><i class="fas fa-envelope"></i> contato@clinicavivamed.com.br</p>
-                    <p class="mb-1"><i class="fas fa-whatsapp"></i> (41) 99997-1693</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Horário de Funcionamento</h5>
-                    <p class="mb-1">Segunda a Sexta: 7h às 19h</p>
-                    <p class="mb-1">Sábado: 8h às 14h</p>
-                    <p class="mb-1">Domingo: Emergências</p>
-                </div>
-            </div>
-            <hr class="my-3">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="mb-0">&copy; 2024 Clínica Médica VivaMed. Todos os direitos reservados.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- JavaScript Personalizado -->
-    <script src="script.js"></script>
-</body>
+    <p class="text-center mt-3">
+        Não tem conta? <a href="registro.php">Criar conta</a>
+    </p>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
