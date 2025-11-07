@@ -1,40 +1,87 @@
+<?php require_once __DIR__ . '/require_login.php'; ?>
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 
-// Verificar se usuário está logado
+/* ---------------------- Helpers de mensagem (flash) ---------------------- */
+function flash(string $msg, string $tipo = 'info'): void {
+    $_SESSION['mensagem'] = $msg;
+    $_SESSION['tipo_mensagem'] = $tipo;
+}
+function flash_show(): void {
+    if (!empty($_SESSION['mensagem'])) {
+        $tipo = $_SESSION['tipo_mensagem'] ?? 'info';
+        $classe = 'alert-info';
+        if ($tipo === 'sucesso') $classe = 'alert-success';
+        if ($tipo === 'erro')    $classe = 'alert-danger';
+        if ($tipo === 'aviso')   $classe = 'alert-warning';
+        echo '<div class="alert ' . $classe . ' mt-3" role="alert">'
+           . htmlspecialchars($_SESSION['mensagem']) .
+           '</div>';
+        unset($_SESSION['mensagem'], $_SESSION['tipo_mensagem']);
+    }
+}
+
+/* ---------------------- Verificação de login ---------------------- */
 if (!estaLogado()) {
-    definirMensagem('Acesso negado. Faça login primeiro.', 'erro');
-    redirecionar('login.php');
+    flash('Acesso negado. Faça login primeiro.', 'erro');
+    header('Location: login.php');
+    exit;
 }
 
-// Buscar dados para o dashboard
+/* ---------------------- Conexão PDO ---------------------- */
 try {
-    $pdo = conectarBanco();
-    
-    // Buscar agendamentos recentes
-    $sql_agendamentos = "SELECT * FROM agendamentos ORDER BY criado_em DESC LIMIT 10";
-    $stmt_agendamentos = $pdo->query($sql_agendamentos);
-    $agendamentos = $stmt_agendamentos->fetchAll();
-    
-    // Buscar mensagens recentes
-    $sql_contatos = "SELECT * FROM contatos ORDER BY criado_em DESC LIMIT 5";
-    $stmt_contatos = $pdo->query($sql_contatos);
-    $contatos = $stmt_contatos->fetchAll();
-    
-    // Estatísticas
-    $stats = [
-        'total_agendamentos' => $pdo->query("SELECT COUNT(*) FROM agendamentos")->fetchColumn(),
-        'pendentes' => $pdo->query("SELECT COUNT(*) FROM agendamentos WHERE status = 'pendente'")->fetchColumn(),
-        'confirmados' => $pdo->query("SELECT COUNT(*) FROM agendamentos WHERE status = 'confirmado'")->fetchColumn(),
-        'total_contatos' => $pdo->query("SELECT COUNT(*) FROM contatos")->fetchColumn()
-    ];
-    
-} catch (Exception $e) {
-    definirMensagem('Erro ao carregar dados do dashboard.', 'erro');
-    $agendamentos = [];
-    $contatos = [];
-    $stats = ['total_agendamentos' => 0, 'pendentes' => 0, 'confirmados' => 0, 'total_contatos' => 0];
+    if (!isset($pdo)) {
+        $pdo = new PDO(
+            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+            DB_USER,
+            DB_PASS,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]
+        );
+    }
+} catch (Throwable $e) {
+    flash('Erro ao conectar ao banco de dados.', 'erro');
+    $pdo = null;
 }
+
+/* ---------------------- Consultas do dashboard ---------------------- */
+$agendamentos = [];
+$contatos = [];
+$stats = ['total_agendamentos' => 0, 'pendentes' => 0, 'confirmados' => 0, 'total_contatos' => 0];
+
+if ($pdo) {
+    try {
+        // Agendamentos recentes (campos existentes na sua tabela)
+        $sql_ag = "SELECT id, nome, email, especialidade, data_agendamento, mensagem, criado_em
+                   FROM agendamentos
+                   ORDER BY criado_em DESC
+                   LIMIT 10";
+        $agendamentos = $pdo->query($sql_ag)->fetchAll();
+
+        // Mensagens recentes
+        $sql_ct = "SELECT id, nome, assunto, mensagem, criado_em
+                   FROM contatos
+                   ORDER BY criado_em DESC
+                   LIMIT 5";
+        $contatos = $pdo->query($sql_ct)->fetchAll();
+
+        // Estatísticas existentes
+        $stats['total_agendamentos'] = (int)$pdo->query("SELECT COUNT(*) FROM agendamentos")->fetchColumn();
+        $stats['total_contatos']     = (int)$pdo->query("SELECT COUNT(*) FROM contatos")->fetchColumn();
+
+        // Como sua tabela NÃO tem coluna 'status', deixamos 0.
+        // Se você criar a coluna status (pendente/confirmado/cancelado), me avise que ajusto aqui.
+        $stats['pendentes']   = 0;
+        $stats['confirmados'] = 0;
+    } catch (Throwable $e) {
+        flash('Erro ao carregar dados do dashboard.', 'erro');
+    }
+}
+
+/* ---------------------- Nome no topo ---------------------- */
+$NOME_DASH = $_SESSION['usuario'] ?? ($_SESSION['nome_completo'] ?? 'Usuário');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -42,7 +89,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Clínica Médica VivaMed</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -51,15 +98,15 @@ try {
     <link href="estilo.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Incluir Menu -->
-    <?php include 'menu.php'; ?>
-    
-    <!-- Mensagens Flash -->
-    <div class="container mt-3">
-        <?php exibirMensagem(); ?>
+    <!-- Menu -->
+    <?php require_once __DIR__ . '/menu.php'; ?>
+
+    <!-- Mensagens -->
+    <div class="container">
+        <?php flash_show(); ?>
     </div>
-    
-    <!-- Dashboard Header -->
+
+    <!-- Header -->
     <section class="bg-primary text-white py-4">
         <div class="container">
             <div class="row align-items-center">
@@ -71,60 +118,60 @@ try {
                 </div>
                 <div class="col-md-4 text-end">
                     <span class="badge bg-success fs-6">
-                        <i class="fas fa-user"></i> <?php echo $_SESSION['nome_completo']; ?>
+                        <i class="fas fa-user"></i> <?php echo htmlspecialchars($NOME_DASH); ?>
                     </span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Dashboard Content -->
+    <!-- Conteúdo -->
     <section class="py-5">
         <div class="container">
-            <!-- Quick Stats -->
+            <!-- KPIs -->
             <div class="row g-4 mb-5">
                 <div class="col-md-6 col-lg-3">
                     <div class="card bg-primary text-white h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-calendar-check fa-3x mb-3"></i>
-                            <h3 class="card-title"><?php echo $stats['total_agendamentos']; ?></h3>
+                            <h3 class="card-title"><?php echo (int)$stats['total_agendamentos']; ?></h3>
                             <p class="card-text">Total de Agendamentos</p>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-md-6 col-lg-3">
                     <div class="card bg-success text-white h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-envelope fa-3x mb-3"></i>
-                            <h3 class="card-title"><?php echo $stats['total_contatos']; ?></h3>
+                            <h3 class="card-title"><?php echo (int)$stats['total_contatos']; ?></h3>
                             <p class="card-text">Mensagens Recebidas</p>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-md-6 col-lg-3">
                     <div class="card bg-info text-white h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-clock fa-3x mb-3"></i>
-                            <h3 class="card-title"><?php echo $stats['pendentes']; ?></h3>
+                            <h3 class="card-title"><?php echo (int)$stats['pendentes']; ?></h3>
                             <p class="card-text">Pendentes</p>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-md-6 col-lg-3">
                     <div class="card bg-warning text-white h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-check-circle fa-3x mb-3"></i>
-                            <h3 class="card-title"><?php echo $stats['confirmados']; ?></h3>
+                            <h3 class="card-title"><?php echo (int)$stats['confirmados']; ?></h3>
                             <p class="card-text">Confirmados</p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Recent Appointments -->
+
+            <!-- Agendamentos Recentes -->
             <div class="row">
                 <div class="col-lg-8 mb-4">
                     <div class="card">
@@ -136,83 +183,48 @@ try {
                         <div class="card-body">
                             <?php if (!empty($agendamentos)): ?>
                                 <div class="table-responsive">
-                                    <table class="table table-hover">
+                                    <table class="table table-hover align-middle">
                                         <thead>
                                             <tr>
                                                 <th>Paciente</th>
                                                 <th>Data/Hora</th>
-                                                <th>Serviço</th>
-                                                <th>Status</th>
-                                                <th>Ações</th>
+                                                <th>Especialidade</th>
+                                                <th>Observação</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($agendamentos as $agendamento): ?>
+                                        <?php foreach ($agendamentos as $ag): ?>
+                                            <?php
+                                                $dt = $ag['data_agendamento'];
+                                                $dataFmt = $dt ? date('d/m/Y', strtotime($dt)) : '-';
+                                                $horaFmt = $dt ? date('H:i', strtotime($dt)) : '-';
+                                            ?>
                                             <tr>
                                                 <td>
-                                                    <strong><?php echo htmlspecialchars($agendamento['nome_paciente']); ?></strong><br>
-                                                    <small class="text-muted"><?php echo htmlspecialchars($agendamento['email_paciente']); ?></small>
+                                                    <strong><?php echo htmlspecialchars($ag['nome'] ?? '-'); ?></strong><br>
+                                                    <small class="text-muted"><?php echo htmlspecialchars($ag['email'] ?? ''); ?></small>
                                                 </td>
-                                                <td>
-                                                    <?php echo date('d/m/Y', strtotime($agendamento['data_agendamento'])); ?><br>
-                                                    <small><?php echo date('H:i', strtotime($agendamento['hora_agendamento'])); ?></small>
-                                                </td>
-                                                <td><?php echo htmlspecialchars($agendamento['tipo_servico']); ?></td>
-                                                <td>
-                                                    <?php
-                                                    $status_class = '';
-                                                    $status_text = '';
-                                                    switch($agendamento['status']) {
-                                                        case 'pendente':
-                                                            $status_class = 'bg-warning';
-                                                            $status_text = 'Pendente';
-                                                            break;
-                                                        case 'confirmado':
-                                                            $status_class = 'bg-success';
-                                                            $status_text = 'Confirmado';
-                                                            break;
-                                                        case 'cancelado':
-                                                            $status_class = 'bg-danger';
-                                                            $status_text = 'Cancelado';
-                                                            break;
-                                                    }
-                                                    ?>
-                                                    <span class="badge <?php echo $status_class; ?>"><?php echo $status_text; ?></span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm">
-                                                        <button class="btn btn-outline-primary" title="Ver detalhes" 
-                                                                onclick="verDetalhes(<?php echo $agendamento['id']; ?>)">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <?php if ($agendamento['status'] == 'pendente'): ?>
-                                                        <button class="btn btn-outline-success" title="Confirmar"
-                                                                onclick="alterarStatus(<?php echo $agendamento['id']; ?>, 'confirmado')">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-                                                        <?php endif; ?>
-                                                        <button class="btn btn-outline-danger" title="Cancelar"
-                                                                onclick="alterarStatus(<?php echo $agendamento['id']; ?>, 'cancelado')">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                    </div>
+                                                <td><?php echo $dataFmt; ?><br><small><?php echo $horaFmt; ?></small></td>
+                                                <td><?php echo htmlspecialchars($ag['especialidade'] ?? '-'); ?></td>
+                                                <td class="text-truncate" style="max-width: 280px;">
+                                                    <small class="text-muted"><?php echo htmlspecialchars($ag['mensagem'] ?? ''); ?></small>
                                                 </td>
                                             </tr>
-                                            <?php endforeach; ?>
+                                        <?php endforeach; ?>
                                         </tbody>
                                     </table>
                                 </div>
                             <?php else: ?>
                                 <div class="text-center py-4">
                                     <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">Nenhum agendamento encontrado</p>
+                                    <p class="text-muted mb-0">Nenhum agendamento encontrado</p>
                                 </div>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Recent Messages -->
+
+                <!-- Mensagens Recentes -->
                 <div class="col-lg-4 mb-4">
                     <div class="card">
                         <div class="card-header bg-success text-white">
@@ -222,31 +234,33 @@ try {
                         </div>
                         <div class="card-body">
                             <?php if (!empty($contatos)): ?>
-                                <?php foreach ($contatos as $contato): ?>
-                                <div class="border-bottom pb-3 mb-3">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1"><?php echo htmlspecialchars($contato['nome']); ?></h6>
-                                            <p class="mb-1 small"><?php echo htmlspecialchars($contato['assunto']); ?></p>
-                                            <small class="text-muted"><?php echo date('d/m/Y H:i', strtotime($contato['criado_em'])); ?></small>
+                                <?php foreach ($contatos as $c): ?>
+                                    <div class="border-bottom pb-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1"><?php echo htmlspecialchars($c['nome'] ?? '-'); ?></h6>
+                                                <p class="mb-1 small"><?php echo htmlspecialchars($c['assunto'] ?? ''); ?></p>
+                                                <small class="text-muted">
+                                                    <?php echo $c['criado_em'] ? date('d/m/Y H:i', strtotime($c['criado_em'])) : ''; ?>
+                                                </small>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-primary" title="Ver mensagem"
+                                                    onclick="verMensagem(<?php echo (int)$c['id']; ?>)">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                        <button class="btn btn-sm btn-outline-primary" title="Ver mensagem"
-                                                onclick="verMensagem(<?php echo $contato['id']; ?>)">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <p class="mb-0 small text-muted mt-2">
+                                            <?php
+                                                $msg = trim((string)($c['mensagem'] ?? ''));
+                                                echo htmlspecialchars(mb_strimwidth($msg, 0, 120, '...'));
+                                            ?>
+                                        </p>
                                     </div>
-                                    <p class="mb-0 small text-muted mt-2">
-                                        <?php 
-                                        $mensagem = htmlspecialchars($contato['mensagem']);
-                                        echo strlen($mensagem) > 100 ? substr($mensagem, 0, 100) . '...' : $mensagem;
-                                        ?>
-                                    </p>
-                                </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="text-center py-4">
                                     <i class="fas fa-envelope-open fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">Nenhuma mensagem encontrada</p>
+                                    <p class="text-muted mb-0">Nenhuma mensagem encontrada</p>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -263,7 +277,7 @@ try {
                 <div class="col-md-4">
                     <h5><i class="fas fa-hospital-alt"></i> Clínica Médica VivaMed</h5>
                     <p class="mb-1"><i class="fas fa-map-marker-alt"></i> Rua das Flores, 123</p>
-                    <p class="mb-1">Curitba, PR - CEP 01234-567</p>
+                    <p class="mb-1">Curitiba, PR - CEP 01234-567</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Contato</h5>
@@ -286,29 +300,20 @@ try {
             </div>
         </div>
     </footer>
-    
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- JavaScript Personalizado -->
-    <script src="script.js"></script>
-    
+
     <script>
-    // Funções JavaScript para o dashboard
     function verDetalhes(id) {
         alert('Ver detalhes do agendamento #' + id);
-        // Implementar modal ou redirecionamento
     }
-    
     function alterarStatus(id, novoStatus) {
-        if (confirm('Confirma a alteração do status?')) {
-            // Implementar AJAX para alterar status
-            window.location.href = 'alterar_status.php?id=' + id + '&status=' + novoStatus;
-        }
+        alert('Status não disponível — a tabela não possui coluna "status".');
+        // Se você criar a coluna status, posso implementar o AJAX aqui.
     }
-    
     function verMensagem(id) {
         alert('Ver mensagem #' + id);
-        // Implementar modal ou redirecionamento
     }
     </script>
 </body>
