@@ -14,8 +14,8 @@ if (!function_exists('estaLogadoPaciente')) {
     function estaLogadoPaciente(): bool { return isset($_SESSION['paciente_id']); }
 }
 
-// Página atual para marcar "active"
-$__ATUAL = basename($_SERVER['PHP_SELF'] ?? '');
+// Detecta página atual para marcar "active"
+$__ATUAL = basename($_SERVER['PHP_SELF'] ?? 'index.php');
 ?>
 <!-- Menu de Navegação Reutilizável -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
@@ -29,119 +29,77 @@ $__ATUAL = basename($_SERVER['PHP_SELF'] ?? '');
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Esquerda -->
-            <ul class="navbar-nav me-auto">
+        <div id="navbarNav" class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+
                 <li class="nav-item">
                     <a class="nav-link <?= $__ATUAL==='index.php' ? 'active' : '' ?>" href="index.php">
-                        <i class="fas fa-home"></i> Início
+                        Início
                     </a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link <?= $__ATUAL==='servicos.php' ? 'active' : '' ?>" href="servicos.php">
-                        <i class="fas fa-stethoscope"></i> Serviços
+                        Serviços
                     </a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link <?= $__ATUAL==='sobre.php' ? 'active' : '' ?>" href="sobre.php">
-                        <i class="fas fa-info-circle"></i> Sobre
+                        Sobre
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link <?= $__ATUAL==='contato.php' ? 'active' : '' ?>" href="contato.php">
-                        <i class="fas fa-envelope"></i> Contato
+                    <a class="nav-link <?= $__ATUAL==='contato.php' || $__ATUAL==='reclamacao.php' ? 'active' : '' ?>" href="reclamacao.php">
+                        Contato
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= $__ATUAL==='reclamacao.php' ? 'active' : '' ?>" href="reclamacao.php">
-                        <i class="fas fa-exclamation-triangle"></i> Reclamação
-                    </a>
-                </li>
-            </ul>
 
-            <!-- Direita -->
-            <ul class="navbar-nav">
-                <?php if (estaLogado()): ?>
-                    <!-- Admin/Staff logado -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-shield"></i>
-                            <?= htmlspecialchars($_SESSION['usuario'] ?? 'Usuário') ?>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="dashboard.php">
-                                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="logout.php">
-                                    <i class="fas fa-sign-out-alt"></i> Sair
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                <?php elseif (estaLogadoPaciente()): ?>
-                    <!-- Paciente logado -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?= ($__ATUAL==='paciente_dashboard.php') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i>
-                            <?= htmlspecialchars($_SESSION['paciente_nome'] ?? 'Paciente') ?>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="paciente_dashboard.php">
-                                    <i class="fas fa-user-circle"></i> Minha conta
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="paciente_logout.php">
-                                    <i class="fas fa-sign-out-alt"></i> Sair
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                <?php else: ?>
-                    <!-- Ninguém logado -->
+                <?php if (estaLogado() || estaLogadoPaciente()): ?>
                     <li class="nav-item">
-                        <a class="nav-link <?= $__ATUAL==='login.php' ? 'active' : '' ?>" href="login.php">
-                            <i class="fas fa-sign-in-alt"></i> Login (Admin)
-                        </a>
-                    </li>
-
-                    <!-- REMOVIDO: Criar conta (Admin) público -->
-                    <!-- <li class="nav-item">
-                        <a class="nav-link <?= $__ATUAL==='registro.php' ? 'active' : '' ?>" href="registro.php">
-                            <i class="fas fa-user-plus"></i> Criar conta (Admin)
-                        </a>
-                    </li> -->
-
-                    <!-- Área do Paciente + Criar Conta (Paciente) -->
-                    <li class="nav-item">
-                        <a class="nav-link <?= ($__ATUAL==='paciente_login.php') ? 'active' : '' ?>"
-                           href="paciente_login.php">
-                            <i class="fas fa-user"></i> Área do Paciente
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= ($__ATUAL==='paciente_registro.php') ? 'active' : '' ?>"
-                           href="paciente_registro.php">
-                            <i class="fas fa-user-plus"></i> Criar conta (Paciente)
+                        <a class="nav-link <?= $__ATUAL==='agendar.php' ? 'active' : '' ?> btn btn-success ms-2 px-3"
+                           href="agendar.php">
+                            <i class="fas fa-calendar-plus"></i> Agendar
                         </a>
                     </li>
                 <?php endif; ?>
 
-                <!-- Agendar como página (sem modal) -->
-                <li class="nav-item">
-                    <a class="nav-link <?= $__ATUAL==='agendar.php' ? 'active' : '' ?> btn btn-success ms-2 px-3"
-                       href="agendar.php">
-                        <i class="fas fa-calendar-plus"></i> Agendar
-                    </a>
-                </li>
+                <?php if (estaLogado()): ?>
+                    <!-- Menu de usuário staff/admin -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle <?= in_array($__ATUAL, ['dashboard.php','paciente.php','agenda.php']) ? 'active' : '' ?>"
+                           href="#" id="admDrop" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                           Administração
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="admDrop">
+                            <li><a class="dropdown-item" href="dashboard.php">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="paciente.php">Pacientes</a></li>
+                            <li><a class="dropdown-item" href="agenda.php">Agenda</a></li>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+                <?php if (estaLogadoPaciente()): ?>
+                    <!-- Menu do paciente -->
+                    <li class="nav-item">
+                        <a class="nav-link <?= $__ATUAL==='paciente_dashboard.php' ? 'active' : '' ?>"
+                           href="paciente_dashboard.php">Minha Área</a>
+                    </li>
+                <?php endif; ?>
+
+                <!-- Login / Logout -->
+                <?php if (!estaLogado() && !estaLogadoPaciente()): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $__ATUAL==='paciente_login.php' ? 'active' : '' ?> btn btn-outline-light ms-lg-3"
+                           href="paciente_login.php">Entrar</a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light ms-lg-3" href="logout.php">Sair</a>
+                    </li>
+                <?php endif; ?>
+
             </ul>
         </div>
     </div>
